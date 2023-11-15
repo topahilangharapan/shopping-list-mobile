@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_list/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_list/screens/menu.dart';
+import 'dart:convert';
+
 // TODO: Impor drawer yang sudah dibuat sebelumnya
 
 class ShopFormPage extends StatefulWidget {
@@ -16,6 +21,7 @@ class _ShopFormPageState extends State<ShopFormPage> {
   String _description = "";
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -117,38 +123,35 @@ class _ShopFormPageState extends State<ShopFormPage> {
                           backgroundColor:
                           MaterialStateProperty.all(Colors.indigo),
                         ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Produk berhasil tersimpan'),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        // TODO: Munculkan value-value lainnya
-                                        Text('Nama: $_name'),
-                                        Text('Harga: $_price'),
-                                        Text('Deskripsi: $_description'),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                            _formKey.currentState!.reset();
-                          }
+                        onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                                // Kirim ke Django dan tunggu respons
+                                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                                final response = await request.postJson(
+                                "http://10.0.2.2/create-flutter/",
+                                jsonEncode(<String, String>{
+                                    'name': _name,
+                                    'price': _price.toString(),
+                                    'description': _description,
+                                    // TODO: Sesuaikan field data sesuai dengan aplikasimu
+                                }));
+                                if (response['status'] == 'success') {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                    content: Text("Produk baru berhasil disimpan!"),
+                                    ));
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => MyHomePage()),
+                                    );
+                                } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                        content:
+                                            Text("Terdapat kesalahan, silakan coba lagi."),
+                                    ));
+                                }
+                            }
                         },
                         child: const Text(
                           "Save",
