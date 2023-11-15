@@ -15,7 +15,7 @@ class _ProductPageState extends State<ProductPage> {
   Future<List<Product>> fetchProduct() async {
     // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
     var url = Uri.parse(
-        'http://10.0.2.2:///json/');
+        'http://127.0.0.1:8000/auth/login/');
     var response = await http.get(
       url,
       headers: {"Content-Type": "application/json"},
