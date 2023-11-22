@@ -5,6 +5,9 @@ A new Flutter project.
 ## Build Status
 [![Build status](https://build.appcenter.ms/v0.1/apps/762f4b3d-80e8-4838-a717-fe9ccfa15a71/branches/main/badge)](https://appcenter.ms)
 
+## App Center Link
+https://install.appcenter.ms/orgs/hilangharapan-shopping-list/apps/shopping-list/distribution_groups/public
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
